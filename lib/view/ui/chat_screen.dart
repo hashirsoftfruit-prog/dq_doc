@@ -313,7 +313,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       double maxWidth = constraints.maxWidth;
-      double w1p = maxWidth * 0.01;
+      // double w1p = maxWidth * 0.01;
 
       _messages = Provider.of<OnlineConsultManager>(context).cMessages;
 

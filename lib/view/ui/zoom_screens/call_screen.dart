@@ -179,7 +179,8 @@ class _CallScreenState extends State<CallScreen> {
           // Start video manually after session join
           ZoomVideoSdkUser? mySelf = await zoom.session.getMySelf();
           if (mySelf != null) {
-            await zoom.videoHelper.startVideo();
+            final status = await zoom.videoHelper.startVideo();
+            log(status);
             isVideoOn.value = await mySelf.videoStatus?.isOn() ?? false;
           }
         } catch (e, s) {
@@ -224,6 +225,7 @@ class _CallScreenState extends State<CallScreen> {
         isSpeakerOn.value = speakerOn;
         isVideoOn.value = videoOn!;
         users.value = remoteUsers!;
+
         isReceiveSpokenLanguageContentEnabled.value = await zoom
             .liveTranscriptionHelper
             .isReceiveSpokenLanguageContentEnabled();
@@ -548,12 +550,14 @@ class _CallScreenState extends State<CallScreen> {
             if (videoOn) {
               await zoom.videoHelper.stopVideo();
             } else {
-              await zoom.videoHelper.startVideo();
+              final status = await zoom.videoHelper.startVideo();
+              log(status);
             }
           }
         }
       } on Exception catch (e) {
-        log(e.toString());
+        log("video on off error $e");
+
       }
     }
 

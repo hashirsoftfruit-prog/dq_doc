@@ -34,13 +34,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>bluetoothDecription</string>
+	<string>App needs blutooth access</string>
 	<key>NSCameraUsageDescription</key>
-	<string>cameraDesciption</string>
+	<string>App would like to access your Camera</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>microphoneDesciption</string>
+	<string>App needs microphone access</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>photoLibraryDescription</string>
+	<string>App needs Photo Library access</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

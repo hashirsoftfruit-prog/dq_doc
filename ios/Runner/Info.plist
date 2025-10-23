@@ -36,11 +36,11 @@
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>App needs blutooth access</string>
 	<key>NSCameraUsageDescription</key>
-	<string>App would like to access your Camera</string>
+	<string>This app uses the camera to enable video consultations with patients during Zoom calls.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>App needs microphone access</string>
+	<string>This app uses the microphone to let doctors and patients communicate with audio during Zoom video consultations.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>App needs Photo Library access</string>
+	<string>This app accesses the photo library so doctors can share medical images or reports with patients during consultations.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

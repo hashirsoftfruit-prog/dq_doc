@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dqueuedoc/model/core/basic_response_model.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/foundation.dart';
@@ -181,18 +183,85 @@ class _AddDrugSheetState extends State<AddDrugSheet>
                           ],
                         ),
                         verticalSpace(h1p * 0.1),
+                        // TextField(
+                        //   textCapitalization: TextCapitalization.sentences,
+                        //   onChanged: (val) {
+                        //     getIt<OnlineConsultManager>().setSearchQueryValue(
+                        //       val,
+                        //     );
+                        //   },
+                        //   decoration: inputDec4(hnt: "Search"),
+                        // ),
+
+                        // verticalSpace(8),
+                        // SizedBox(
+                        //   child: SingleChildScrollView(
+                        //     child: Column(
+                        //       children: [
+                        //         ...drugs
+                        //             .where((element) {
+                        //               // Filter based on search query and exclusion of addedItems
+                        //               final matchesSearch =
+                        //                   mgr.searchQuery.isEmpty ||
+                        //                   (element.title != null &&
+                        //                       element.title!
+                        //                           .toLowerCase()
+                        //                           .contains(
+                        //                             mgr.searchQuery
+                        //                                 .toLowerCase(),
+                        //                           ));
+
+                        //               return matchesSearch;
+                        //             })
+                        //             .map(
+                        //               (e) => GestureDetector(
+                        //                 onTap: () {
+                        //                   getIt<OnlineConsultManager>()
+                        //                       .setDrugName(
+                        //                         BasicListItem(
+                        //                           id: e.id,
+                        //                           item: e.title,
+                        //                         ),
+                        //                       );
+                        //                 },
+                        //                 child: listItem(e.title ?? ""),
+                        //               ),
+                        //             ),
+                        //         Visibility(
+                        //           visible: mgr.searchQuery.trim().isNotEmpty,
+                        //           child: InkWell(
+                        //             onTap: () {
+                        //               getIt<OnlineConsultManager>().setDrugName(
+                        //                 BasicListItem(
+                        //                   item: mgr.searchQuery,
+                        //                   id: 12,
+                        //                 ),
+                        //               );
+                        //             },
+                        //             child: listItem(
+                        //               'Create "${mgr.searchQuery}"',
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(
                           child: DropdownSearch<BasicListItem>(
+                            selectedItem: mgr.selectedDrug,
                             itemAsString: (BasicListItem u) => u.item ?? "",
                             compareFn: (item1, item2) {
                               return item1.id == item2.id;
                             },
+                            
                             popupProps: PopupProps.menu(
                               menuProps: MenuProps(
                                 backgroundColor: Colors.white,
                                 animation: controller,
                               ),
                               showSelectedItems: false,
+
                               showSearchBox: true,
                               searchFieldProps: TextFieldProps(
                                 // autofocus: true,
@@ -201,6 +270,7 @@ class _AddDrugSheetState extends State<AddDrugSheet>
                               // showSelectedItems: true,
                               // disabledItemFn: (String s) => s.startsWith('I'),
                             ),
+
                             // items: (String? filter, LoadProps? props) async {
                             //   final list = drugs
                             //       .map(
@@ -237,10 +307,40 @@ class _AddDrugSheetState extends State<AddDrugSheet>
                             ),
 
                             onChanged: (val) {
+                              log(val!.item!);
                               getIt<OnlineConsultManager>().setDrugName(val);
                             },
                             // selectedItem: merchand,
                           ),
+                        ),
+                        verticalSpace(h1p),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                final newDrug = await _showAddDrugDialog(
+                                  context,
+                                  drugUnits: drugUnits,
+                                  drugTypes: drugtypes,
+                                );
+                                if (newDrug != null) {
+                                  print("New Drug Added: ${newDrug.title}");
+                                  getIt<OnlineConsultManager>()
+                                      .addNewDrugToDrugParams(newDrug);
+                                }
+                              },
+
+                              child: Text(
+                                "Add New",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12.0,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         verticalSpace(h1p),
                         Row(
@@ -841,6 +941,237 @@ class _AddDrugSheetState extends State<AddDrugSheet>
           ),
         );
       },
+    );
+  }
+
+  listItem(String? title) {
+    return ListTile(
+      title: Text(title ?? "", style: TextStyles.lstItemTxt),
+      style: ListTileStyle.list,
+      tileColor: Colors.white,
+      visualDensity: VisualDensity.comfortable,
+      trailing: const Icon(Icons.add, color: Colors.black26),
+    );
+  }
+
+  Future<Drug?> _showAddDrugDialog(
+    BuildContext context, {
+    required List<BasicListItem> drugTypes,
+    required List<BasicListItem> drugUnits,
+  }) async {
+    final titleController = TextEditingController();
+    BasicListItem? selectedType = drugTypes.first;
+    BasicListItem? selectedUnit = drugUnits.first;
+
+    return showDialog<Drug>(
+      context: context,
+      // barrierDismissible: false,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 24,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 🔹 Title Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Add New Drug",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.close_rounded,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () => Navigator.pop(ctx),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 🔹 Drug Name
+                    _buildTextField(
+                      controller: titleController,
+                      label: "Drug Name",
+                      hint: "Enter drug title",
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 🔹 Drug Type Dropdown
+                    _buildDropdown(
+                      label: "Drug Type",
+                      value: selectedType,
+                      items: drugTypes,
+                      onChanged: (value) =>
+                          setState(() => selectedType = value),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 🔹 Drug Unit Dropdown
+                    _buildDropdown(
+                      label: "Drug Unit",
+                      value: selectedUnit,
+                      items: drugUnits,
+                      onChanged: (value) =>
+                          setState(() => selectedUnit = value),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // 🔹 Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey[700],
+                          ),
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text(
+                            "Cancel",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 22,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 1,
+                          ),
+                          onPressed: () {
+                            if (titleController.text.trim().isEmpty ||
+                                selectedType == null ||
+                                selectedUnit == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Please fill all fields."),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                              return;
+                            }
+
+                            final drug = Drug(
+                              id: DateTime.now().millisecondsSinceEpoch,
+                              title: titleController.text.trim(),
+                              drugTypeId: selectedType!.id,
+                              drugTypeTitle: selectedType!.item,
+                              drugUnitId: selectedUnit!.id,
+                              drugUnitTitle: selectedUnit!.item,
+                              isNew: true,
+                            );
+
+                            Navigator.pop(ctx, drug);
+                          },
+                          child: const Text(
+                            "Save",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// ✅ Text Field Builder (Unified Design)
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    String? hint,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blueAccent, width: 1.3),
+        ),
+      ),
+    );
+  }
+
+  /// ✅ Dropdown Builder (Matching Input Style)
+  Widget _buildDropdown({
+    required String label,
+    required BasicListItem? value,
+    required List<BasicListItem> items,
+    required Function(BasicListItem?) onChanged,
+  }) {
+    return DropdownButtonFormField<BasicListItem>(
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blueAccent, width: 1.3),
+        ),
+      ),
+      value: value,
+      icon: const Icon(Icons.keyboard_arrow_down_rounded),
+      items: items
+          .map(
+            (item) => DropdownMenuItem(
+              value: item,
+              child: Text(item.item ?? "Unknown"),
+            ),
+          )
+          .toList(),
+      onChanged: onChanged,
     );
   }
 }

@@ -32,6 +32,7 @@ class OnlineConsultManager extends ChangeNotifier {
   // List<String> selectedDiagnList = [];
   String selectedDuration = "Days";
   String selectedIntervalType = "Hour";
+  String searchQuery = '';
   BasicListItem? selectedDrug;
   List<TextMessage> cMessages = [];
   bool patientsReqLoader = true;
@@ -70,6 +71,12 @@ class OnlineConsultManager extends ChangeNotifier {
   setShowSmallPoints(bool value) {
     showSmallPoints = value;
     notifyListeners();
+  }
+
+  addNewDrugToDrugParams(Drug drug) {
+    drugParams!.drugs!.add(drug);
+    notifyListeners();
+    setDrugName(BasicListItem(id: drug.id, item: drug.title));
   }
 
   setSelectedSmallPoint(String? pointId) {
@@ -450,14 +457,13 @@ class OnlineConsultManager extends ChangeNotifier {
   setDrugName(BasicListItem? item) {
     for (var aaa in drugParams!.drugs!) {
       if (aaa.title == item?.item) {
-        print("dfdfdfdfdf");
-
         getIt<OnlineConsultManager>().setUpDrugType(
           Param(title: aaa.drugTypeTitle, id: aaa.drugTypeId),
         );
         getIt<OnlineConsultManager>().setUpDrugUnit(
           Param(title: aaa.drugUnitTitle, id: aaa.drugUnitId),
         );
+        break;
       }
     }
 
@@ -805,5 +811,10 @@ class OnlineConsultManager extends ChangeNotifier {
 
   void addPatientId(String id, bool value) {
     patientsReqListId[id] = value;
+  }
+
+  void setSearchQueryValue(String val) {
+    searchQuery = val;
+    notifyListeners();
   }
 }

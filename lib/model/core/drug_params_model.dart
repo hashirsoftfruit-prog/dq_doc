@@ -8,15 +8,16 @@ class DrugParams {
   List<Drug>? drugs;
   List<Param>? labTest;
 
-  DrugParams(
-      {this.status,
-      this.message,
-      this.drugType,
-      this.drugUnit,
-      this.labTest,
-      this.doses,
-      this.drugs,
-      this.commonDiagnosis});
+  DrugParams({
+    this.status,
+    this.message,
+    this.drugType,
+    this.drugUnit,
+    this.labTest,
+    this.doses,
+    this.drugs,
+    this.commonDiagnosis,
+  });
 
   DrugParams.fromJson(Map<String, dynamic> json) {
     status = json['status'];
@@ -74,8 +75,9 @@ class DrugParams {
       data['drug_unit'] = drugUnit!.map((v) => v.toJson()).toList();
     }
     if (commonDiagnosis != null) {
-      data['common_diagnosis'] =
-          commonDiagnosis!.map((v) => v.toJson()).toList();
+      data['common_diagnosis'] = commonDiagnosis!
+          .map((v) => v.toJson())
+          .toList();
     }
     if (doses != null) {
       data['doses'] = doses!.map((v) => v.toJson()).toList();
@@ -110,14 +112,17 @@ class Drug {
   String? drugUnitTitle;
   int? drugTypeId;
   String? drugTypeTitle;
+  bool? isNew;
 
-  Drug(
-      {this.id,
-      this.title,
-      this.drugUnitId,
-      this.drugUnitTitle,
-      this.drugTypeId,
-      this.drugTypeTitle});
+  Drug({
+    this.id,
+    this.title,
+    this.drugUnitId,
+    this.drugUnitTitle,
+    this.drugTypeId,
+    this.drugTypeTitle,
+    this.isNew,
+  });
 
   Drug.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -126,12 +131,14 @@ class Drug {
     drugUnitTitle = json['drug_unit_title'];
     drugTypeId = json['drug_type_id'];
     drugTypeTitle = json['drug_type_title'];
+    isNew = json['is_new'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['title'] = title;
+    data['is_new'] = isNew;
     data['drug_unit_id'] = drugUnitId;
     data['drug_unit_title'] = drugUnitTitle;
     data['drug_type_id'] = drugTypeId;

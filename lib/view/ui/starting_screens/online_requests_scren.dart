@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dqueuedoc/controller/managers/online_consult_manager.dart';
+import 'package:dqueuedoc/controller/managers/state_manager.dart';
 import 'package:dqueuedoc/view/theme/text_styles.dart';
 import 'package:dqueuedoc/view/theme/widgets.dart';
 import 'package:flutter/material.dart';
@@ -165,6 +166,7 @@ class CallRequestPopup extends StatefulWidget {
   // int docId;
   final String appoinmentId;
   final bool inChatStatus;
+  final int tempBookingId;
 
   // double ma
   const CallRequestPopup({
@@ -176,6 +178,7 @@ class CallRequestPopup extends StatefulWidget {
     required this.appoinmentId,
     required this.bookingId,
     required this.inChatStatus,
+    required this.tempBookingId,
   });
 
   @override
@@ -288,6 +291,9 @@ class _CallRequestPopupState extends State<CallRequestPopup> {
                       child: InkWell(
                         onTap: () {
                           Navigator.pop(context);
+                          getIt<OnlineConsultManager>().cancelInitiatedBooking(
+                            bookingId: widget.tempBookingId,
+                          );
                         },
                         child: btn(isAcceptBtn: false),
                       ),

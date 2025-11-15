@@ -51,7 +51,6 @@ dependencies:
   flu_wake_lock: ^0.0.2
   flutter:
     sdk: flutter
-  # flutter_chat_types: ^3.6.2
   flutter_chat_types: ^3.6.2
   flutter_chat_ui: ^1.6.12
   flutter_date_pickers: ^0.4.3

@@ -25,7 +25,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
-    getIt<AuthManager>().getUserDetails();
+    getIt<AuthManager>().getDoctorDetails();
     super.initState();
   }
 

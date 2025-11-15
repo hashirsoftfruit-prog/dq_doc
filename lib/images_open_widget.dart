@@ -21,7 +21,7 @@ class GalleryImageViewWrapper extends StatefulWidget {
   final bool closeWhenSwipeDown;
 
   const GalleryImageViewWrapper({
-    Key? key,
+    super.key,
     required this.titleGallery,
     required this.backgroundColor,
     required this.initialIndex,
@@ -38,7 +38,7 @@ class GalleryImageViewWrapper extends StatefulWidget {
     required this.showAppBar,
     required this.closeWhenSwipeUp,
     required this.closeWhenSwipeDown,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -47,8 +47,9 @@ class GalleryImageViewWrapper extends StatefulWidget {
 }
 
 class _GalleryImageViewWrapperState extends State<GalleryImageViewWrapper> {
-  late final PageController _controller =
-      PageController(initialPage: widget.initialIndex ?? 0);
+  late final PageController _controller = PageController(
+    initialPage: widget.initialIndex ?? 0,
+  );
   int _currentPage = 0;
 
   @override
@@ -84,15 +85,14 @@ class _GalleryImageViewWrapperState extends State<GalleryImageViewWrapper> {
 
     return Scaffold(
       appBar: widget.showAppBar
-          ? AppBar(
-              title: Text(widget.titleGallery ?? "Gallery"),
-            )
+          ? AppBar(title: Text(widget.titleGallery ?? "Gallery"))
           : null,
       backgroundColor: widget.backgroundColor,
       body: SafeArea(
         child: Container(
-          constraints:
-              BoxConstraints.expand(height: MediaQuery.of(context).size.height),
+          constraints: BoxConstraints.expand(
+            height: MediaQuery.of(context).size.height,
+          ),
           child: Column(
             children: [
               Expanded(
@@ -127,11 +127,7 @@ class _GalleryImageViewWrapperState extends State<GalleryImageViewWrapper> {
                       children: widget.galleryItems.map((e) {
                         widget.galleryItems.indexOf(e);
 
-                        return Row(
-                          children: [
-                            _buildLitImage(e),
-                          ],
-                        );
+                        return Row(children: [_buildLitImage(e)]);
                       }).toList(),
                     ),
                   ),
@@ -143,7 +139,7 @@ class _GalleryImageViewWrapperState extends State<GalleryImageViewWrapper> {
     );
   }
 
-// build image with zooming
+  // build image with zooming
   Widget _buildImage(GalleryItemModel item, bool loader) {
     return Stack(
       children: [
@@ -165,32 +161,28 @@ class _GalleryImageViewWrapperState extends State<GalleryImageViewWrapper> {
         Align(
           alignment: Alignment.topRight,
           child: Container(
-              margin: const EdgeInsets.only(
-                top: 8.0,
-                right: 8.0,
-              ),
-              decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8)),
-              child: loader == true
-                  ? Center(
-                      child: CircularProgressIndicator(
-                      color: Colors.white70,
-                    ))
-                  : IconButton(
-                      onPressed: () async {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      ))),
-        )
+            margin: const EdgeInsets.only(top: 8.0, right: 8.0),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: loader == true
+                ? Center(
+                    child: CircularProgressIndicator(color: Colors.white70),
+                  )
+                : IconButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.close, color: Colors.white),
+                  ),
+          ),
+        ),
       ],
     );
   }
 
-// build image with zooming
+  // build image with zooming
   Widget _buildLitImage(GalleryItemModel item) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -265,7 +257,6 @@ class AppCachedNetworkImage extends StatelessWidget {
     );
   }
 }
-
 
 // import 'dart:io';
 // import 'package:flutter_progress_hud/flutter_progress_hud.dart';

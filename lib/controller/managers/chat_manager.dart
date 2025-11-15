@@ -1,8 +1,9 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:dqueuedoc/controller/managers/state_manager.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,6 +40,7 @@ class ChatProvider extends ChangeNotifier {
   //   });
   // }
 
+  //clearing all chat
   disposeChat() {
     messagesInChat = [];
     messagesList = [];
@@ -99,6 +101,9 @@ class ChatProvider extends ChangeNotifier {
   //       // }
   //     });
   //   }
+
+  //using snapshot to get real time messages from firebase firestore
+  //in future change into web socket
   void listenToMessage(String messageId) async {
     // DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
     //     .collection('chat')
@@ -213,6 +218,7 @@ class ChatProvider extends ChangeNotifier {
   //   });
   // }
 
+  //send message
   void fireBSendMessage({
     required String? msg,
     required String? id,
@@ -247,7 +253,8 @@ class ChatProvider extends ChangeNotifier {
   // }
 
   loadMessages({
-    required int roomId,
+    required int
+    roomId, //roomId is the chat id, it is connected with appointment id, so each time new chat room will open even the same doctor and patient
     // required int pageNo
   }) async {
     chatLoader = true;
@@ -332,6 +339,7 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  //saving document and images
   Future<BasicResponseModel> saveChatFile({required String filePath}) async {
     String tokn =
         getIt<SharedPreferences>().getString(StringConstants.token) ?? "";

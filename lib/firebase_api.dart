@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dqueuedoc/controller/managers/auth_manager.dart';
+import 'package:dqueuedoc/view/ui/starting_screens/landing_screen.dart';
 import 'package:dqueuedoc/view/ui/starting_screens/online_requests_scren.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -96,6 +97,8 @@ Future<void> notificationTapBackgroundHandler(
 }
 
 class NotificationServiceAndroid {
+
+  //as singleton
   NotificationServiceAndroid._();
   static final NotificationServiceAndroid instance =
       NotificationServiceAndroid._();
@@ -104,6 +107,7 @@ class NotificationServiceAndroid {
 
   Future<void> init() async {
     await Firebase.initializeApp();
+    //important
     final settings = await _messaging.requestPermission();
     if (kDebugMode) {
       print('Authorization status: ${settings.authorizationStatus}');
@@ -136,11 +140,11 @@ class NotificationServiceAndroid {
           notificationTapBackgroundHandler, // ✅ FIXED
     );
 
+    // --- android specific setup --- 
     final android = localNotifications
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >();
-
     await android?.createNotificationChannel(defaultChannel);
     await android?.createNotificationChannel(scheduledIn10Channel);
 
@@ -159,10 +163,11 @@ class NotificationServiceAndroid {
 
     // Tapped from terminated state
     FirebaseMessaging.instance.getInitialMessage().then((m) {
+      //we triggering certain actions on the basis of notification data
       if (m != null) handleAction(m);
     });
 
-    // Tapped from background
+    // Tapped from background (not terminatted)
     FirebaseMessaging.onMessageOpenedApp.listen(handleAction);
 
     // Foreground messages
@@ -213,7 +218,7 @@ class NotificationServiceAndroid {
     }
   }
 
-  /// Shows a local notification using the correct Android channel
+  /// Shows a local notification using the correct
   Future<void> showFromMessage(RemoteMessage message) async {
     final n = message.notification;
     if (n == null) return;
@@ -275,12 +280,28 @@ class NotificationServiceAndroid {
   /// App-specific actions based on data['type']
   void handleAction(RemoteMessage m) async {
     // log("message ${m.data}");
+    log("message is ${m.data}");
     final type = m.data['type'];
     log(type.toString());
     switch (type) {
       case 'online_patient_request':
         getIt<StateManager>().changeHomeIndex(2);
         getIt<OnlineConsultManager>().getPatientRequestList();
+        break;
+      case 'user_cancelled_instant_booking':
+        log("message isssssssssssssss");
+        getIt<StateManager>().changeHomeIndex(2);
+        getIt<OnlineConsultManager>().getPatientRequestList();
+        break;
+      case 'call_rejected_after_initiation':
+        log("message isssssssssssssss call_rejected_after_initiation");
+        getIt<StateManager>().changeHomeIndex(2);
+        Navigator.of(
+          getIt<NavigationService>().navigatorkey.currentContext!,
+        ).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (ctx) => const LandingScreen()),
+          (Route<dynamic> route) => false,
+        );
         break;
       case 'booking_alert_in_10':
       case 'scheduled_request':
@@ -300,6 +321,7 @@ class NotificationServiceAndroid {
             imag: m.data['patient_image'],
             bookid: int.tryParse(m.data['booking_id']),
             inChatStatus: inChat,
+            tempBookingId: int.tryParse(m.data['temperory_booking_id']),
           );
         }
         break;
@@ -322,6 +344,7 @@ void _showCallAlert({
   required String? imag,
   required int? bookid,
   required bool inChatStatus,
+  int? tempBookingId,
 }) {
   showDialog(
     context: getIt<NavigationService>().navigatorkey.currentContext!,
@@ -331,6 +354,7 @@ void _showCallAlert({
       img: imag ?? '',
       bookingId: bookid!,
       inChatStatus: inChatStatus,
+      tempBookingId: tempBookingId!,
     ),
   );
 }

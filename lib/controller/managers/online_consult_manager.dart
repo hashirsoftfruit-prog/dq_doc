@@ -68,6 +68,7 @@ class OnlineConsultManager extends ChangeNotifier {
   String? selectedPositionId;
   bool? isLoading = false;
 
+  //anatomy
   setShowSmallPoints(bool value) {
     showSmallPoints = value;
     notifyListeners();
@@ -107,6 +108,7 @@ class OnlineConsultManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  //confirming CallCompletion to server
   confirmCallCompletion(bookId) async {
     String endpoint = Endpoints.confirmCallCompletion;
     String tokn =
@@ -127,6 +129,7 @@ class OnlineConsultManager extends ChangeNotifier {
     }
   }
 
+  //to patient
   shareAnatomyImage({
     int? bookId,
     String? left,
@@ -816,5 +819,27 @@ class OnlineConsultManager extends ChangeNotifier {
   void setSearchQueryValue(String val) {
     searchQuery = val;
     notifyListeners();
+  }
+
+  Future<BasicResponseModel> cancelInitiatedBooking({
+    required int bookingId,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 50));
+
+    String endpoint = Endpoints.cancelInitiatedBooking;
+
+    String tokn =
+        getIt<SharedPreferences>().getString(StringConstants.token) ?? "";
+    Map<String, dynamic> data = {"booking_id": bookingId};
+    dynamic responseData = await getIt<DioClient>().post(endpoint, data, tokn);
+
+    log("response of cancelInitiatedBooking $bookingId $responseData");
+
+    notifyListeners();
+    if (responseData != null) {
+      return BasicResponseModel.fromJson(responseData);
+    } else {
+      return BasicResponseModel(message: "Something went wrong", status: false);
+    }
   }
 }

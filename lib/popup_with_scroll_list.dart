@@ -1,7 +1,6 @@
-import 'package:dqueuedoc/view/theme/text_styles.dart';
-
 import 'package:dqueuedoc/model/core/basic_response_model.dart';
 import 'package:dqueuedoc/view/theme/constants.dart';
+import 'package:dqueuedoc/view/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:wheel_picker/wheel_picker.dart';
 

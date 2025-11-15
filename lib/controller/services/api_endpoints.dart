@@ -45,11 +45,14 @@ class Endpoints {
       "doctor_login/doctor-forum-response-reaction-save";
   static const String publicForumSearch = "doctor_login/doctor-forum-search";
   static const String doctorCancelBooking =
-      "doctor_login/doctor-cancel-booking";
+      "doctor_login/doctor-cancel-scheduled-booking";
   static const String confirmCallCompletion =
       "doctor_login/confirm-call-completion";
   static const String showAnatomyImage = "doctor_login/show-anatomy-image";
 
   static const String updateNotificationSound =
       "doctor_login/update-doctor-notification-sound";
+
+  static String cancelInitiatedBooking =
+      "doctor_login/doctor-cancel-initiated-booking";
 }

@@ -37,8 +37,8 @@ class HomeManager extends ChangeNotifier {
   bool notificationLoader = false;
   AppDetailsModel? appDetailsModel;
   NotificationsModel notificationsModel = NotificationsModel();
-// var fullScreenUser = useState<ZoomVideoSdkUser?>(null);
-// List<String> docForumsList=["sdsd","sdsd",];
+  // var fullScreenUser = useState<ZoomVideoSdkUser?>(null);
+  // List<String> docForumsList=["sdsd","sdsd",];
   bool forumLoader = false;
   bool forumSearchLoader = false;
   ForumListModel? forumListModel;
@@ -51,8 +51,13 @@ class HomeManager extends ChangeNotifier {
     forumLoader = false;
   }
 
-  searchForum(
-      {required String keyword, bool? isRefresh, bool? isSelfForums}) async {
+  //search forum with keyword
+  searchForum({
+    required String keyword,
+    bool? isRefresh,
+    bool? isSelfForums,
+  }) async {
+    //check the pagination status to check
     if (publicForumSearchResultsModel == null ||
         (publicForumSearchResultsModel!.currentPage != null &&
             publicForumSearchResultsModel!.next != null) ||
@@ -73,19 +78,24 @@ class HomeManager extends ChangeNotifier {
         "search": keyword,
 
         "page": publicForumSearchResultsModel?.next ?? 1,
-        "forum_type":
-            isSelfForums == true ? 2 : 2 // 1 - Doctor related, 2 - All
+        "forum_type": isSelfForums == true
+            ? 2
+            : 2, // 1 - Doctor related, 2 - All
       };
 
-      dynamic responseData =
-          await getIt<DioClient>().post(endpoint, data, tokn);
+      dynamic responseData = await getIt<DioClient>().post(
+        endpoint,
+        data,
+        tokn,
+      );
 
       if (responseData != null) {
         var result = ForumListModel.fromJson(responseData);
         publicForumSearchResultsModel!.next = result.next;
         publicForumSearchResultsModel!.currentPage = result.currentPage;
-        publicForumSearchResultsModel!.publicForums!
-            .addAll(result.publicForums ?? []);
+        publicForumSearchResultsModel!.publicForums!.addAll(
+          result.publicForums ?? [],
+        );
         notifyListeners();
       } else {
         // return SymptomsAndIssuesModel(status: false);
@@ -99,22 +109,27 @@ class HomeManager extends ChangeNotifier {
     publicForumSearchResultsModel = null;
   }
 
+  //this function call the home functions to begin
   initFns() async {
-    getIt<OnlineConsultManager>().getScheduledBookings(DateTime.now());
+    //getting all schedule booking, only return certain number of items on the given date.
+    await getIt<OnlineConsultManager>().getScheduledBookings(DateTime.now());
 
+    //call requests
     await getIt<OnlineConsultManager>().getPatientRequestList();
 
+    //notificaiton count and instant availability
     await getIt<HomeManager>().getDoctorAppDetails();
+
+    //recent patients
     await getIt<OnlineConsultManager>().getRecentPatientsList();
 
-    getIt<AuthManager>().getUserDetails();
+    //doctor details
+    await getIt<AuthManager>().getDoctorDetails();
 
     // getIt<StateManager>().getSoundNotificaitonEnabled();
   }
 
-  getNotifications({
-    required int index,
-  }) async {
+  getNotifications({required int index}) async {
     await Future.delayed(const Duration(milliseconds: 50));
     notificationLoader = true;
     notifyListeners();
@@ -125,9 +140,7 @@ class HomeManager extends ChangeNotifier {
     String tokn =
         getIt<SharedPreferences>().getString(StringConstants.token) ?? "";
 
-    Map<String, dynamic> data = {
-      "page": index,
-    };
+    Map<String, dynamic> data = {"page": index};
 
     dynamic responseData = await getIt<DioClient>().post(endpoint, data, tokn);
     if (responseData != null) {
@@ -139,8 +152,12 @@ class HomeManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<BasicResponseModel> forumResponseReactionSave(
-      {required int forumRespId, required int reaction}) async {
+
+  //doctors' reaction for form response
+  Future<BasicResponseModel> forumResponseReactionSave({
+    required int forumRespId,
+    required int reaction,
+  }) async {
     forumLoader = true;
 
     await Future.delayed(const Duration(milliseconds: 50));
@@ -152,7 +169,7 @@ class HomeManager extends ChangeNotifier {
     Map<String, dynamic> data = {
       "forum_response_id": forumRespId,
       "reaction_type": reaction,
-      "flag": null
+      "flag": null,
     };
     dynamic responseData = await getIt<DioClient>().post(endpoint, data, tokn);
     forumLoader = false;
@@ -169,9 +186,9 @@ class HomeManager extends ChangeNotifier {
     }
   }
 
-  Future<BasicResponseModel> setOnlineStatus({
-    required int index,
-  }) async {
+
+  //toggling active status
+  Future<BasicResponseModel> setOnlineStatus({required int index}) async {
     // await Future.delayed(Duration(milliseconds: 50));
     // notificationLoader = true;
     // notifyListeners();
@@ -191,8 +208,10 @@ class HomeManager extends ChangeNotifier {
       var result = BasicResponseModel.fromJson(responseData);
       return result;
     }
-    var result =
-        BasicResponseModel(status: false, message: "Something went wrong");
+    var result = BasicResponseModel(
+      status: false,
+      message: "Something went wrong",
+    );
     return result;
     // notifyListeners();
   }
@@ -260,8 +279,9 @@ class HomeManager extends ChangeNotifier {
     String endpoint = Endpoints.saveDoctorForumFeedback;
     List<MultipartFile> imageFilesData = [];
     for (var i in imgs) {
-      imageFilesData
-          .add(await MultipartFile.fromFile(i, filename: i.split('/').last));
+      imageFilesData.add(
+        await MultipartFile.fromFile(i, filename: i.split('/').last),
+      );
     }
 
     final formData = FormData.fromMap({
@@ -279,8 +299,11 @@ class HomeManager extends ChangeNotifier {
     // "file": null ,
     //
     // };
-    dynamic responseData =
-        await getIt<DioClient>().post(endpoint, formData, tokn);
+    dynamic responseData = await getIt<DioClient>().post(
+      endpoint,
+      formData,
+      tokn,
+    );
 
     if (responseData != null) {
       var res = BasicResponseModel.fromJson(responseData);
@@ -309,9 +332,7 @@ class HomeManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  getForumList({
-    bool? isRefresh,
-  }) async {
+  getForumList({bool? isRefresh}) async {
     if (forumListModel == null ||
         (forumListModel!.currentPage != null && forumListModel!.next != null) ||
         isRefresh == true) {
@@ -328,11 +349,14 @@ class HomeManager extends ChangeNotifier {
 
       Map<String, dynamic> data = {
         "page": forumListModel?.next ?? 1,
-        "forum_type": 1 // "Upcoming" || "Previous" || "Cancelled"
+        "forum_type": 1, // "Upcoming" || "Previous" || "Cancelled"
       };
 
-      dynamic responseData =
-          await getIt<DioClient>().post(endpoint, data, tokn);
+      dynamic responseData = await getIt<DioClient>().post(
+        endpoint,
+        data,
+        tokn,
+      );
 
       if (responseData != null) {
         var result = ForumListModel.fromJson(responseData);
@@ -347,6 +371,7 @@ class HomeManager extends ChangeNotifier {
     }
   }
 
+  //change notificaiton status when user see all notifications ie, enter notificaiton screen
   notificationStatusChange() async {
     // await Future.delayed(Duration(milliseconds: 50));
     // notificationLoader = true;

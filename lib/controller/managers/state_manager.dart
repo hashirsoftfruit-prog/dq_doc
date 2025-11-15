@@ -5,13 +5,14 @@ import 'package:intl/intl.dart';
 
 import '../../model/core/basic_response_model.dart';
 
+//on this manager, functions are used for common purpose
 class StateManager extends ChangeNotifier {
-// bool startAnimation = false;
+  // bool startAnimation = false;
   bool showPass = false;
-// int consultTabIndex=1;
+  // int consultTabIndex=1;
   bool isShowChat = true;
   int btmNavIndex = 2;
-// bool tempIconViewStatus = true;
+  // bool tempIconViewStatus = true;
   int onlineStatus = 1;
   bool inCallStatus = false;
   bool inChatStatus = false;
@@ -22,10 +23,10 @@ class StateManager extends ChangeNotifier {
 
   bool isSoundNotificationEnabled = false;
 
-// setAnimation(bool val){
-//  startAnimation = val;
-//  notifyListeners();
-// }
+  // setAnimation(bool val){
+  //  startAnimation = val;
+  //  notifyListeners();
+  // }
   List<BasicListItem> addedItems = [];
   List<BasicListItem> listItems = [];
 
@@ -106,8 +107,9 @@ class StateManager extends ChangeNotifier {
     const chars =
         'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     Random rnd = Random();
-    return String.fromCharCodes(Iterable.generate(
-        5, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+    return String.fromCharCodes(
+      Iterable.generate(5, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))),
+    );
   }
 
   bool getInCallStatus() {
@@ -163,7 +165,7 @@ class StateManager extends ChangeNotifier {
     notifyListeners();
   }
 
-// dispose animationVariable
+  // dispose animationVariable
 
   String? validateFieldValues(String val, String type) {
     switch (type) {

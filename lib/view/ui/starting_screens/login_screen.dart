@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../controller/managers/auth_manager.dart';
 import '../../../controller/managers/state_manager.dart';
@@ -356,6 +357,23 @@ class _LoginScreenState extends State<LoginScreen>
                                       style: TextStyles.textStyle8b,
                                     ),
                                   ),
+                                ),
+                              ),
+                            ),
+                            verticalSpace(12),
+                            TextButton(
+                              onPressed: () async {
+                                final Uri url = Uri.parse(
+                                  'https://dqapp.doctoronqueue.com/registration',
+                                );
+                                if (!await launchUrl(url)) {
+                                  throw Exception('Could not launch $url');
+                                }
+                              },
+                              child: Text(
+                                "Are you a practising doctor? Register here.",
+                                style: t400_14.copyWith(
+                                  color: Colours.primaryblue,
                                 ),
                               ),
                             ),

@@ -20,21 +20,23 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.ozaz.dqueuedoc"
     compileSdk = 36
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "29.0.13599879"
 
 
-    packagingOptions {
-        jniLibs {
-            useLegacyPackaging = true
-        }
-    }
+
 
     defaultConfig {
         applicationId = "com.ozaz.dqueuedoc"
-        minSdk = 26
+        minSdk = 28
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        externalNativeBuild {
+                cmake {
+                    arguments("-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON")
+                }
+            }
     }
 
     compileOptions {
@@ -72,13 +74,18 @@ android {
         }
     }
     packagingOptions {
+         jniLibs {
+            useLegacyPackaging = true
+        }
         resources {
             excludes += setOf(
                 "META-INF/DEPENDENCIES",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
                 "META-INF/LICENSE",
                 "META-INF/LICENSE.txt",
-                "META-INF/NOTICE",
-                "META-INF/NOTICE.txt"
+                "META-INF/license.txt",
+                "META-INF/notice.txt"
             )
         }
     }
@@ -94,9 +101,12 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 
     // Zoom Video SDK
-    implementation("us.zoom.videosdk:zoomvideosdk-core:1.12.1")
-    implementation("us.zoom.videosdk:zoomvideosdk-videoeffects:1.12.1")
-    implementation("us.zoom.videosdk:zoomvideosdk-annotation:1.12.1")
+    implementation("us.zoom.videosdk:zoomvideosdk-core:2.4.0")
+    implementation("us.zoom.videosdk:zoomvideosdk-videoeffects:2.4.0")
+    implementation("us.zoom.videosdk:zoomvideosdk-annotation:2.4.0")
+    // implementation("us.zoom.videosdk:zoomvideosdk-core:1.12.1")
+    // implementation("us.zoom.videosdk:zoomvideosdk-videoeffects:1.12.1")
+    // implementation("us.zoom.videosdk:zoomvideosdk-annotation:1.12.1")
 
     // Firebase BoM (Bill of Materials)
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
